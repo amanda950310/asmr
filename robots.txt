@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://amanda950310.github.io/asmr/sitemap.xml
+Sitemap: https://amanda950310.github.io/sitemap.xml
