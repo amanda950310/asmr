@@ -131,7 +131,7 @@
     </div>
 
     <h3 class="related-title">相关推荐</h3>
-    <div class="related-grid" id="relatedList"></div>
+    <div id="relatedList" class="related-grid"></div>
   </div>
 
   <script>
@@ -141,9 +141,9 @@
     async function loadAllVideos() {
       try {
         const res = await fetch("./video_list.json");
-        allVideos = await res.json();
-        showRelated();
+        if (res.ok) allVideos = await res.json();
       } catch (e) {}
+      showRelated();
     }
 
     if (playItem) {
@@ -155,6 +155,7 @@
 
     function showRelated() {
       const relatedList = document.getElementById("relatedList");
+      relatedList.innerHTML = "";
       const related = allVideos.filter(v => v.id !== playItem.id);
       related.forEach(item => {
         const card = document.createElement("div");

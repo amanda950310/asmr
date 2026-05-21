@@ -179,7 +179,7 @@
     const canvas = document.getElementById("captureCanvas");
     const ctx = canvas.getContext("2d");
 
-    // 页面加载时自动读取已有视频
+    // 页面加载时读取JSON
     window.onload = async function() {
       try {
         const res = await fetch("./video_list.json");
@@ -208,7 +208,7 @@
       });
     }
 
-    // 导出JSON（下载，上传到服务器即可）
+    // 导出JSON
     function exportJson(){
       if(videos.length === 0){ alert("暂无视频"); return; }
       const jsonStr = JSON.stringify(videos,null,2);
@@ -229,7 +229,7 @@
       exportJson();
     }
 
-    // 保存（新增/修改）自动导出JSON
+    // 保存（新增/修改）
     async function saveVideo(){
       const id = document.getElementById("editId").value;
       const title = document.getElementById("title").value.trim();

@@ -146,10 +146,13 @@
     let videos = [];
     const videoList = document.getElementById("videoList");
 
-    // 读取服务器 video_list.json
     async function loadVideos() {
       try {
         const res = await fetch("./video_list.json");
+        if (!res.ok) {
+          videoList.innerHTML = '<div class="empty-tip">暂无视频，请前往后台添加</div>';
+          return;
+        }
         videos = await res.json();
         renderVideo(videos);
       } catch (e) {
