@@ -12,115 +12,272 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
     }
     body {
-      background-color: #f8fafc;
-      color: #1e293b;
+      background-color: #f4f4f5;
+      color: #18191c;
       min-height: 100vh;
     }
+    /* 全局变量 B站色 */
+    :root {
+      --bili-pink: #fb7299;
+      --bili-blue: #00a1d6;
+      --bili-gray: #9499a0;
+      --bili-light: #f1f2f3;
+      --bili-border: #e3e5e7;
+    }
+    /* 顶部导航 */
     header {
       position: fixed;
       top: 0;
       width: 100%;
       background: #ffffff;
-      padding: 16px 5%;
+      padding: 12px 5%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 999;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      border-bottom: 1px solid var(--bili-border);
     }
     .logo {
       font-size: 24px;
-      font-weight: 700;
-      color: #8b5cf6;
+      font-weight: bold;
+      color: var(--bili-pink);
       cursor: pointer;
     }
     .admin-link {
-      padding: 6px 14px;
-      background: #8b5cf6;
+      padding: 6px 16px;
+      background: var(--bili-pink);
       color: #fff;
-      border-radius: 20px;
+      border-radius: 4px;
       text-decoration: none;
       font-size: 14px;
-    }
-    .search-container {
-      padding: 10px 5%;
-      margin-top: 80px;
-      background: #ffffff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .search-box input {
-      background: #f1f5f9;
+      font-weight: 500;
+      transition: background 0.2s;
       border: none;
-      outline: none;
-      padding: 8px 14px;
-      border-radius: 20px;
-      color: #1e293b;
-      width: 100%;
+      cursor: pointer;
+    }
+    .admin-link:hover {
+      background: #f16690;
+    }
+    /* 搜索栏 */
+    .search-container {
+      padding: 15px 5%;
+      margin-top: 68px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--bili-border);
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
       max-width: 500px;
     }
-    .container {
-      margin-top: 20px;
-      padding: 0 5%;
+    .search-box input {
+      width: 100%;
+      height: 36px;
+      background: var(--bili-light);
+      border: 1px solid var(--bili-border);
+      outline: none;
+      padding: 0 15px;
+      border-radius: 18px 0 0 18px;
+      font-size: 14px;
+      color: #18191c;
     }
-    .section-title {
-      font-size: 22px;
-      margin: 30px 0 16px;
-      border-left: 4px solid #8b5cf6;
-      padding-left: 10px;
+    .search-box input:focus {
+      background: #fff;
+      border-color: var(--bili-pink);
     }
-    .video-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    .video-card {
-      background: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
+    .search-box button {
+      height: 36px;
+      width: 70px;
+      background: var(--bili-pink);
+      color: white;
+      border: none;
+      border-radius: 0 18px 18px 0;
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      font-size: 14px;
+    }
+    .search-box button:hover {
+      background: #f16690;
+    }
+    /* Banner轮播区域 */
+    .banner {
+      margin: 20px 5%;
+      height: 200px;
+      background: linear-gradient(135deg, #ff97b7, var(--bili-pink));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(251, 114, 153, 0.2);
+    }
+    /* 主容器+侧边栏 */
+    .main-wrap {
+      display: flex;
+      gap: 20px;
+      padding: 0 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .container {
+      flex: 1;
+    }
+    /* 侧边热度排行 */
+    .sidebar {
+      width: 260px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      height: fit-content;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sidebar-title::before {
+      content: '🔥';
+    }
+    .rank-item {
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      color: #444;
+    }
+    .rank-item:hover {
+      color: var(--bili-pink);
+    }
+    /* 分区标题 */
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 25px 0 15px;
+      padding-left: 10px;
+      border-left: 4px solid var(--bili-pink);
+      color: #18191c;
+    }
+    /* 视频网格 */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 24px 18px;
+    }
+    /* B站标准视频卡片 */
+    .video-card {
+      background: transparent;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
     .video-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px);
+    }
+    .cover-box {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
     }
     .video-cover {
       width: 100%;
-      height: 115px;
+      height: 130px;
       object-fit: cover;
       display: block;
     }
+    /* 卡片角标 */
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .video-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
     .video-info {
-      padding: 12px;
+      padding: 10px 4px;
     }
     .video-title {
       font-size: 14px;
-      line-height: 1.3;
-      margin-bottom: 6px;
+      line-height: 1.4;
+      margin-bottom: 8px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      color: #18191c;
+      font-weight: 500;
     }
-    .video-meta {
+    .video-owner {
       font-size: 12px;
-      color: #64748b;
+      color: var(--bili-gray);
+      margin-bottom: 4px;
+    }
+    .video-data {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--bili-gray);
     }
     .empty-tip{
       text-align:center;
-      padding:40px;
-      color:#94a3b8;
+      padding:60px 20px;
+      color:var(--bili-gray);
+      font-size:14px;
+    }
+    /* 页脚 */
+    footer {
+      margin-top: 40px;
+      padding: 30px 5%;
+      background: #fff;
+      text-align: center;
+      font-size: 13px;
+      color: var(--bili-gray);
+      border-top: 1px solid var(--bili-border);
+    }
+    /* 移动端适配 */
+    @media (max-width: 992px) {
+      .main-wrap {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
     }
     @media (max-width: 768px) {
       .video-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 18px 12px;
       }
-      .search-box input {
+      .video-cover {
+        height: 105px;
+      }
+      .search-box {
         max-width: 100%;
+      }
+      .banner {
+        height: 140px;
+        font-size: 22px;
       }
     }
   </style>
@@ -128,25 +285,81 @@
 <body>
   <header>
     <div class="logo">耳语ASMR</div>
-    <a href="javascript:;" class="admin-link" onclick="goToAdmin()">后台管理</a>
+    <button class="admin-link" onclick="goToAdmin()">后台管理</button>
   </header>
 
   <div class="search-container">
     <div class="search-box">
       <input type="text" id="search" placeholder="搜索ASMR音频视频..." oninput="searchVideo()" />
+      <button onclick="searchVideo()">搜索</button>
     </div>
   </div>
 
-  <div class="container">
-    <h2 class="section-title">ASMR 助眠合集</h2>
-    <div class="video-grid" id="videoList"></div>
+  <!-- Banner -->
+  <div class="banner">
+    广告位招租中 站长邮箱：Amanda950310@gmail.com
   </div>
+
+  <div class="main-wrap">
+    <div class="container">
+      <h2 class="section-title">ASMR 助眠合集</h2>
+      <div class="video-grid" id="videoList"></div>
+    </div>
+
+    <!-- 侧边热度排行（根据真实播放量排序） -->
+    <div class="sidebar">
+      <div class="sidebar-title">热度排行</div>
+      <div id="hotRankList"></div>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 耳语ASMR｜专注沉浸式助眠放松｜所有内容仅供放松解压
+  </footer>
 
   <script>
     let videos = [];
     const videoList = document.getElementById("videoList");
+    const hotRankList = document.getElementById("hotRankList");
+
+    // 初始化播放量本地存储
+    function initPlayCount() {
+      if (!localStorage.getItem("videoPlayCount")) {
+        localStorage.setItem("videoPlayCount", JSON.stringify({}));
+      }
+    }
+
+    // 获取单个视频播放量
+    function getPlayCount(vid) {
+      const data = JSON.parse(localStorage.getItem("videoPlayCount"));
+      return data[vid] || 0;
+    }
+
+    // 增加播放量
+    function addPlayCount(vid) {
+      const data = JSON.parse(localStorage.getItem("videoPlayCount"));
+      data[vid] = (data[vid] || 0) + 1;
+      localStorage.setItem("videoPlayCount", JSON.stringify(data));
+    }
+
+    // 更新热度排行
+    function updateHotRank(list) {
+      const sorted = [...list].sort((a, b) => getPlayCount(b.id) - getPlayCount(a.id)).slice(0,5);
+      hotRankList.innerHTML = "";
+      sorted.forEach((item,idx)=>{
+        const div = document.createElement("div");
+        div.className = "rank-item";
+        div.innerText = `${idx+1}. ${item.title}`;
+        div.onclick = ()=>{
+          localStorage.setItem("playItem", JSON.stringify(item));
+          location.href = "play.html";
+        };
+        hotRankList.appendChild(div);
+      })
+    }
 
     async function loadVideos() {
+      initPlayCount();
       try {
         const res = await fetch("./video_list.json");
         if (!res.ok) {
@@ -155,6 +368,7 @@
         }
         videos = await res.json();
         renderVideo(videos);
+        updateHotRank(videos);
       } catch (e) {
         videoList.innerHTML = '<div class="empty-tip">暂无视频，请前往后台添加</div>';
       }
@@ -167,16 +381,35 @@
         return;
       }
       list.forEach(item => {
+        // 必须给每个视频加唯一id，json里要有id字段
+        if(!item.id) item.id = Date.now() + Math.floor(Math.random()*1000);
+        const playNum = getPlayCount(item.id);
+        const randomTime = Math.floor(Math.random()*3600);
+        const min = Math.floor(randomTime/60);
+        const sec = randomTime%60;
+        const timeStr = `${min}:${sec.toString().padStart(2,'0')}`;
+        const danmu = Math.floor(Math.random()*2000);
+        const owner = item.owner || "ASMR助眠馆";
+
         const card = document.createElement("div");
         card.className = "video-card";
         card.innerHTML = `
-          <img src="${item.cover || 'https://picsum.photos/id/237/400/225'}" class="video-cover" alt="${item.title}">
+          <div class="cover-box">
+            <img src="${item.cover || 'https://picsum.photos/id/237/400/225'}" class="video-cover" alt="${item.title}">
+            <span class="card-badge">精选</span>
+            <span class="video-duration">${timeStr}</span>
+          </div>
           <div class="video-info">
             <div class="video-title">${item.title}</div>
-            <div class="video-meta">ASMR · 助眠放松</div>
+            <div class="video-owner">${owner}</div>
+            <div class="video-data">
+              <span>▶ ${playNum.toLocaleString()}</span>
+              <span>💬 ${danmu}</span>
+            </div>
           </div>
         `;
         card.onclick = () => {
+          addPlayCount(item.id);
           localStorage.setItem("playItem", JSON.stringify(item));
           location.href = "play.html";
         };

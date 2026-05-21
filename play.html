@@ -12,131 +12,211 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
     }
     body {
-      background-color: #f8fafc;
-      color: #1e293b;
+      background-color: #f4f4f5;
+      color: #18191c;
       min-height: 100vh;
     }
+    /* 全局B站变量 */
+    :root {
+      --bili-pink: #fb7299;
+      --bili-gray: #9499a0;
+      --bili-light: #f1f2f3;
+      --bili-border: #e3e5e7;
+    }
+    /* 顶部导航 */
     header {
       position: fixed;
       top: 0;
       width: 100%;
       background: #ffffff;
-      padding: 16px 5%;
+      padding: 12px 5%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 999;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      border-bottom: 1px solid var(--bili-border);
     }
     .logo {
       font-size: 24px;
-      font-weight: 700;
-      color: #8b5cf6;
+      font-weight: bold;
+      color: var(--bili-pink);
     }
-    .back-home {
-      padding: 6px 14px;
-      background: #8b5cf6;
-      color: #fff;
-      border-radius: 20px;
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .admin-link, .back-home {
+      padding: 6px 16px;
+      border-radius: 4px;
       text-decoration: none;
       font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
     }
     .admin-link {
-      padding: 6px 14px;
-      background: #64748b;
+      background: var(--bili-gray);
       color: #fff;
-      border-radius: 20px;
-      text-decoration: none;
-      font-size: 14px;
-      margin-right: 10px;
     }
+    .back-home {
+      background: var(--bili-pink);
+      color: #fff;
+    }
+    .back-home:hover {
+      background: #f16690;
+    }
+    /* 主容器 */
     .container {
-      margin-top: 90px;
-      padding: 30px 5%;
-      max-width: 1000px;
+      margin-top: 70px;
+      padding: 20px 5%;
+      max-width: 1400px;
       margin-left: auto;
       margin-right: auto;
+      display: flex;
+      gap: 20px;
+    }
+    /* 播放主体 */
+    .main-player {
+      flex: 1;
     }
     .player-section {
       background: #ffffff;
-      border-radius: 14px;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     video {
       width: 100%;
       display: block;
       outline: none;
+      background: #000;
     }
     .player-info {
-      padding: 20px;
+      padding: 16px;
     }
     .player-title {
-      font-size: 22px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .player-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--bili-gray);
       margin-bottom: 8px;
     }
     .desc {
-      color: #64748b;
-      margin-top: 8px;
+      color: var(--bili-gray);
+      font-size: 14px;
     }
-    .related-title {
-      font-size: 18px;
-      margin: 30px 0 16px;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-    }
-    .related-card {
+    /* 右侧相关推荐 */
+    .sidebar-related {
+      width: 260px;
       background: #fff;
       border-radius: 8px;
-      overflow: hidden;
-      cursor: pointer;
+      padding: 16px;
+      height: fit-content;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
+    .related-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .related-title::before {
+      content: '📌';
+    }
+    .related-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .related-card {
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+    }
     .related-card img {
-      width: 100%;
-      height: 80px;
+      width: 90px;
+      height: 50px;
       object-fit: cover;
+      border-radius: 4px;
     }
     .related-card .title {
-      padding: 8px;
-      font-size: 12px;
-      white-space: nowrap;
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-      text-overflow: ellipsis;
+      color: #444;
+    }
+    .related-card:hover .title {
+      color: var(--bili-pink);
+    }
+    /* 移动端 */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar-related {
+        width: 100%;
+      }
+      .related-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="logo">耳语ASMR</div>
-    <div>
-      <a href="javascript:;" class="admin-link" onclick="goToAdmin()">后台管理</a>
+    <div class="header-buttons">
+      <button class="admin-link" onclick="goToAdmin()">后台管理</button>
       <a href="index.html" class="back-home">返回首页</a>
     </div>
   </header>
 
   <div class="container">
-    <div class="player-section">
-      <video id="mainVideo" controls autoplay></video>
-      <div class="player-info">
-        <h2 class="player-title" id="currentTitle"></h2>
-        <p class="desc">安静放松 · 沉浸式助眠 · 佩戴耳机体验更佳</p>
+    <div class="main-player">
+      <div class="player-section">
+        <video id="mainVideo" controls autoplay></video>
+        <div class="player-info">
+          <h2 class="player-title" id="currentTitle"></h2>
+          <div class="player-meta">
+            <span>播放：<span id="playCount">0</span></span>
+            <span>UP主：ASMR助眠馆</span>
+          </div>
+          <p class="desc">安静放松 · 沉浸式助眠 · 佩戴耳机体验更佳</p>
+        </div>
       </div>
     </div>
 
-    <h3 class="related-title">相关推荐</h3>
-    <div id="relatedList" class="related-grid"></div>
+    <div class="sidebar-related">
+      <div class="related-title">相关推荐</div>
+      <div id="relatedList" class="related-grid"></div>
+    </div>
   </div>
 
   <script>
     const playItem = JSON.parse(localStorage.getItem("playItem"));
     let allVideos = [];
+
+    // 获取播放量
+    function getPlayCount(vid) {
+      const data = JSON.parse(localStorage.getItem("videoPlayCount") || "{}");
+      return data[vid] || 0;
+    }
 
     async function loadAllVideos() {
       try {
@@ -149,6 +229,7 @@
     if (playItem) {
       document.getElementById("mainVideo").src = playItem.url;
       document.getElementById("currentTitle").innerText = playItem.title;
+      document.getElementById("playCount").innerText = getPlayCount(playItem.id).toLocaleString();
     } else {
       location.href = "index.html";
     }
