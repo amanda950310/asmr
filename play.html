@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ASMR播放｜沉浸式助眠放松解压</title>
+  <meta name="keywords" content="ASMR,助眠ASMR,耳语ASMR,口腔音,触发音,解压放松,快速入睡">
+  <meta name="description" content="在线观看高质量ASMR助眠视频，沉浸式耳语、口腔音、触发音，睡前放松解压，快速入睡。">
+  <meta name="robots" content="index,follow">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: #ffffff;
+      padding: 16px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+    .back-home {
+      padding: 6px 14px;
+      background: #8b5cf6;
+      color: #fff;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .admin-link {
+      padding: 6px 14px;
+      background: #64748b;
+      color: #fff;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    .container {
+      margin-top: 90px;
+      padding: 30px 5%;
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .player-section {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    video {
+      width: 100%;
+      display: block;
+      outline: none;
+    }
+    .player-info {
+      padding: 20px;
+    }
+    .player-title {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .desc {
+      color: #64748b;
+      margin-top: 8px;
+    }
+    .related-title {
+      font-size: 18px;
+      margin: 30px 0 16px;
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .related-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .related-card img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+    }
+    .related-card .title {
+      padding: 8px;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">耳语ASMR</div>
+    <div>
+      <a href="javascript:;" class="admin-link" onclick="goToAdmin()">后台管理</a>
+      <a href="index.html" class="back-home">返回首页</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="player-section">
+      <video id="mainVideo" controls autoplay></video>
+      <div class="player-info">
+        <h2 class="player-title" id="currentTitle"></h2>
+        <p class="desc">安静放松 · 沉浸式助眠 · 佩戴耳机体验更佳</p>
+      </div>
+    </div>
+
+    <h3 class="related-title">相关推荐</h3>
+    <div class="related-grid" id="relatedList"></div>
+  </div>
+
+  <script>
+    const playItem = JSON.parse(localStorage.getItem("playItem"));
+    let allVideos = [];
+
+    async function loadAllVideos() {
+      try {
+        const res = await fetch("./video_list.json");
+        allVideos = await res.json();
+        showRelated();
+      } catch (e) {}
+    }
+
+    if (playItem) {
+      document.getElementById("mainVideo").src = playItem.url;
+      document.getElementById("currentTitle").innerText = playItem.title;
+    } else {
+      location.href = "index.html";
+    }
+
+    function showRelated() {
+      const relatedList = document.getElementById("relatedList");
+      const related = allVideos.filter(v => v.id !== playItem.id);
+      related.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "related-card";
+        card.innerHTML = `
+          <img src="${item.cover || 'https://picsum.photos/id/237/400/225'}" alt="${item.title}">
+          <div class="title">${item.title}</div>
+        `;
+        card.onclick = () => {
+          localStorage.setItem("playItem", JSON.stringify(item));
+          location.reload();
+        };
+        relatedList.appendChild(card);
+      });
+    }
+
+    function goToAdmin() {
+      const pwd = prompt("后台密码：");
+      if (pwd === "aa123123") location.href = "admin.html";
+    }
+
+    loadAllVideos();
+  </script>
+</body>
+</html>

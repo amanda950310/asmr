@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>耳语ASMR - 后台管理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: #ffffff;
+      padding: 16px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: #8b5cf6;
+    }
+    .back-home {
+      padding: 6px 14px;
+      background: #8b5cf6;
+      color: #fff;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .container {
+      margin-top: 90px;
+      padding: 30px 5%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .admin-card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      margin-bottom: 30px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #8b5cf6;
+    }
+    .form-item {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      outline: none;
+    }
+    button {
+      padding: 10px 24px;
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom:10px;
+    }
+    .video-list-admin {
+      background: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .video-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap:10px;
+    }
+    .video-item:last-child {
+      border-bottom: none;
+    }
+    .video-item-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .video-item-info img {
+      width: 80px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .title-input {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      width: 280px;
+    }
+    .delete-btn {
+      background: #ef4444;
+    }
+    .edit-btn{
+      background:#22c55e;
+    }
+    .export-btn{
+      background:#0ea5e9;
+    }
+    .clear-btn{
+      background:#9333ea;
+    }
+    canvas{
+      display:none;
+    }
+    .empty-tip{
+      text-align:center;
+      padding:20px;
+      color:#94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">耳语ASMR - 后台管理</div>
+    <a href="index.html" class="back-home">返回首页</a>
+  </header>
+
+  <div class="container">
+    <div class="admin-card">
+      <h2 id="formTitle">添加新视频</h2>
+      <input type="hidden" id="editId" value="">
+      <div class="form-item">
+        <label>视频标题</label>
+        <input type="text" id="title" placeholder="输入ASMR标题">
+      </div>
+      <div class="form-item">
+        <label>视频播放链接</label>
+        <input type="text" id="url" placeholder="输入mp4视频播放地址">
+      </div>
+      <button onclick="saveVideo()">保存并自动生成封面+JSON</button>
+      <button onclick="resetForm()" style="background:#64748b">重置</button>
+      <button class="export-btn" onclick="exportJson()">手动导出JSON</button>
+      <button class="clear-btn" onclick="clearAll()">一键清空全部视频</button>
+    </div>
+
+    <div class="video-list-admin">
+      <h2>视频管理列表</h2>
+      <div id="adminVideoList"></div>
+    </div>
+  </div>
+
+  <canvas id="captureCanvas"></canvas>
+
+  <script>
+    let videos = [];
+    const listDom = document.getElementById("adminVideoList");
+    const canvas = document.getElementById("captureCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // 页面加载时自动读取已有视频
+    window.onload = async function() {
+      try {
+        const res = await fetch("./video_list.json");
+        if (res.ok) {
+          videos = await res.json();
+        }
+      } catch (e) {}
+      renderAdminList();
+    };
+
+    // 截取视频第一帧
+    function getVideoCover(videoUrl) {
+      return new Promise((resolve) => {
+        const video = document.createElement("video");
+        video.src = videoUrl;
+        video.muted = true;
+        video.currentTime = 0.1;
+        video.crossOrigin = "anonymous";
+        video.addEventListener("loadeddata", () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0);
+          resolve(canvas.toDataURL("image/jpeg", 0.8));
+        });
+        video.addEventListener("error", () => resolve(""));
+      });
+    }
+
+    // 导出JSON（下载，上传到服务器即可）
+    function exportJson(){
+      if(videos.length === 0){ alert("暂无视频"); return; }
+      const jsonStr = JSON.stringify(videos,null,2);
+      const blob = new Blob([jsonStr],{type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "video_list.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 一键清空
+    function clearAll(){
+      if(!confirm("确定清空所有视频？")) return;
+      videos = [];
+      renderAdminList();
+      exportJson();
+    }
+
+    // 保存（新增/修改）自动导出JSON
+    async function saveVideo(){
+      const id = document.getElementById("editId").value;
+      const title = document.getElementById("title").value.trim();
+      const url = document.getElementById("url").value.trim();
+      if(!title||!url){ alert("请填写标题和视频地址"); return; }
+
+      const cover = await getVideoCover(url);
+      if(id){
+        const idx = videos.findIndex(v=>v.id==id);
+        videos[idx]={id:Number(id),title,cover,url};
+      }else{
+        const newId = videos.length ? Math.max(...videos.map(v=>v.id))+1 :1;
+        videos.push({id:newId,title,cover,url});
+      }
+
+      alert("保存成功！JSON已自动导出");
+      resetForm();
+      renderAdminList();
+      exportJson();
+    }
+
+    // 快速修改标题
+    function updateTitle(id) {
+      const input = document.querySelector(`.title-input[data-id="${id}"]`);
+      const newTitle = input.value.trim();
+      if (!newTitle) return;
+      const item = videos.find(v => v.id === id);
+      if (item) {
+        item.title = newTitle;
+        exportJson();
+      }
+    }
+
+    function editVideo(id){
+      const item = videos.find(v=>v.id===id);
+      if(!item)return;
+      document.getElementById("editId").value = id;
+      document.getElementById("title").value = item.title;
+      document.getElementById("url").value = item.url;
+      document.getElementById("formTitle").innerText = "修改视频信息";
+    }
+
+    function delVideo(id){
+      if(!confirm("确定删除？"))return;
+      videos = videos.filter(v=>v.id!==id);
+      renderAdminList();
+      exportJson();
+    }
+
+    function resetForm(){
+      document.getElementById("editId").value="";
+      document.getElementById("title").value="";
+      document.getElementById("url").value="";
+      document.getElementById("formTitle").innerText = "添加新视频";
+    }
+
+    function renderAdminList(){
+      listDom.innerHTML = "";
+      if(videos.length === 0){ listDom.innerHTML = '<div class="empty-tip">暂无视频，请添加</div>'; return; }
+      videos.forEach(item=>{
+        const div = document.createElement("div");
+        div.className = "video-item";
+        div.innerHTML = `
+          <div class="video-item-info">
+            <img src="${item.cover || 'https://picsum.photos/id/237/400/225'}" alt="">
+            <input type="text" class="title-input" data-id="${item.id}" value="${item.title}" onblur="updateTitle(${item.id})">
+          </div>
+          <div>
+            <button class="edit-btn" onclick="editVideo(${item.id})">编辑</button>
+            <button class="delete-btn" onclick="delVideo(${item.id})">删除</button>
+          </div>
+        `;
+        listDom.appendChild(div);
+      })
+    }
+  </script>
+</body>
+</html>
