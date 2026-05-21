@@ -208,10 +208,11 @@
       });
     }
 
-    // 导出JSON
+    // 导出JSON（按ID从大到小，最新在最前）
     function exportJson(){
       if(videos.length === 0){ alert("暂无视频"); return; }
-      const jsonStr = JSON.stringify(videos,null,2);
+      const sorted = [...videos].sort((a,b)=>b.id - a.id);
+      const jsonStr = JSON.stringify(sorted,null,2);
       const blob = new Blob([jsonStr],{type:"application/json"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -286,10 +287,12 @@
       document.getElementById("formTitle").innerText = "添加新视频";
     }
 
+    // 渲染列表（最新视频在最上方）
     function renderAdminList(){
       listDom.innerHTML = "";
       if(videos.length === 0){ listDom.innerHTML = '<div class="empty-tip">暂无视频，请添加</div>'; return; }
-      videos.forEach(item=>{
+      const sorted = [...videos].sort((a,b)=>b.id - a.id);
+      sorted.forEach(item=>{
         const div = document.createElement("div");
         div.className = "video-item";
         div.innerHTML = `
