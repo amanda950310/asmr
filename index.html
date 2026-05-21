@@ -102,41 +102,21 @@
     .search-box button:hover {
       background: #f16690;
     }
-    /* Banner轮播区域 */
-    .banner {
-      margin: 20px 5%;
-      height: 200px;
-      background: linear-gradient(135deg, #ff97b7, var(--bili-pink));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 28px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(251, 114, 153, 0.2);
-    }
-    /* 主容器+侧边栏 */
+    /* 主容器 */
     .main-wrap {
-      display: flex;
-      gap: 20px;
       padding: 0 5%;
       max-width: 1400px;
       margin: 0 auto;
     }
-    .container {
-      flex: 1;
-    }
-    /* 侧边热度排行 卡片样式 */
-    .sidebar {
-      width: 260px;
+    /* 横向可滑动排行榜，在视频上方 */
+    .hot-rank-wrap {
       background: #fff;
       border-radius: 8px;
       padding: 16px;
-      height: fit-content;
+      margin-bottom: 20px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    .sidebar-title {
+    .hot-title {
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 12px;
@@ -145,42 +125,39 @@
       align-items: center;
       gap: 6px;
     }
-    .sidebar-title::before {
+    .hot-title::before {
       content: '🔥';
     }
-    .rank-card {
+    .hot-list {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .hot-list::-webkit-scrollbar {
+      height: 4px;
+    }
+    .hot-list::-webkit-scrollbar-thumb {
+      background: #ddd;
+      border-radius: 2px;
+    }
+    .rank-card {
+      min-width: 180px;
       cursor: pointer;
-      transition: padding-left 0.2s;
+      transition: transform 0.2s;
     }
     .rank-card:hover {
-      padding-left: 4px;
-    }
-    .rank-num {
-      width: 18px;
-      height: 18px;
-      line-height: 18px;
-      text-align: center;
-      background: var(--bili-pink);
-      color: #fff;
-      border-radius: 3px;
-      font-size: 12px;
-      flex-shrink: 0;
+      transform: translateY(-3px);
     }
     .rank-cover {
-      width: 60px;
-      height: 40px;
+      width: 100%;
+      height: 100px;
       object-fit: cover;
-      border-radius: 4px;
-      flex-shrink: 0;
+      border-radius: 6px;
+      display: block;
     }
     .rank-info {
-      flex: 1;
-      min-width: 0;
+      margin-top: 6px;
     }
     .rank-title {
       font-size: 13px;
@@ -188,12 +165,24 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      line-height: 1.3;
     }
     .rank-play {
       font-size: 11px;
       color: var(--bili-gray);
       margin-top: 2px;
+    }
+    .rank-num {
+      position: absolute;
+      background: var(--bili-pink);
+      color: #fff;
+      font-size: 12px;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      margin-top: -106px;
+      margin-left: 4px;
     }
     /* 分区标题 */
     .section-title {
@@ -293,14 +282,6 @@
       border-top: 1px solid var(--bili-border);
     }
     /* 移动端适配 */
-    @media (max-width: 992px) {
-      .main-wrap {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-      }
-    }
     @media (max-width: 768px) {
       .video-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -312,9 +293,14 @@
       .search-box {
         max-width: 100%;
       }
-      .banner {
-        height: 140px;
-        font-size: 22px;
+      .hot-list {
+        gap: 10px;
+      }
+      .rank-card {
+        min-width: 140px;
+      }
+      .rank-cover {
+        height: 80px;
       }
     }
   </style>
@@ -332,22 +318,14 @@
     </div>
   </div>
 
-  <!-- Banner -->
-  <div class="banner">
-    广告位招租中 站长邮箱：Amanda950310@gmail.com
-  </div>
-
   <div class="main-wrap">
-    <div class="container">
-      <h2 class="section-title">ASMR 助眠合集</h2>
-      <div class="video-grid" id="videoList"></div>
+    <div class="hot-rank-wrap">
+      <div class="hot-title">热度排行</div>
+      <div class="hot-list" id="hotRankList"></div>
     </div>
 
-    <!-- 侧边热度排行（带视频卡片 + 真实播放量） -->
-    <div class="sidebar">
-      <div class="sidebar-title">热度排行</div>
-      <div id="hotRankList"></div>
-    </div>
+    <h2 class="section-title">ASMR 助眠合集</h2>
+    <div class="video-grid" id="videoList"></div>
   </div>
 
   <footer>
@@ -379,7 +357,7 @@
       localStorage.setItem("videoPlayCount", JSON.stringify(data));
     }
 
-    // 更新热度排行（带封面卡片 + 真实播放量）
+    // 更新热度排行（横向可滑动）
     function updateHotRank(list) {
       const sorted = [...list].sort((a, b) => getPlayCount(b.id) - getPlayCount(a.id)).slice(0,5);
       hotRankList.innerHTML = "";
@@ -388,7 +366,7 @@
         const div = document.createElement("div");
         div.className = "rank-card";
         div.innerHTML = `
-          <div class="rank-num">${idx+1}</div>
+          <span class="rank-num">${idx+1}</span>
           <img src="${item.cover || 'https://picsum.photos/id/237/400/225'}" class="rank-cover" alt="${item.title}">
           <div class="rank-info">
             <div class="rank-title">${item.title}</div>
@@ -427,7 +405,6 @@
         return;
       }
       list.forEach(item => {
-        // 给视频生成稳定唯一ID（后台添加时会固定）
         if(!item.id) item.id = Date.now() + Math.floor(Math.random()*1000);
         const playNum = getPlayCount(item.id);
         const randomTime = Math.floor(Math.random()*3600);
@@ -454,7 +431,6 @@
             </div>
           </div>
         `;
-        // 点击才记录播放量，刷新页面播放量不丢失
         card.onclick = () => {
           addPlayCount(item.id);
           localStorage.setItem("playItem", JSON.stringify(item));
